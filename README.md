@@ -34,11 +34,11 @@ python -m SimpleHTTPServer
 
 Then open your browser and point it to http://0.0.0.0:8000/
 
-Doom should start.
+Doom should start (local mode, no network). Check [doom-workers][8] if you want to run multiplayer locally.
 
-Inspect src/index.html for startup details.
+Inspect [src/index.html][6] for startup details.
 
-Check our live multiplayer [demo][5].
+Check our live multiplayer [demo][5] and [blog post][7].
 
 ## License
 
@@ -49,3 +49,6 @@ Chocolate Doom and this port are distributed under the GNU GPL. See the COPYING 
 [3]: https://doomwiki.org/wiki/DOOM1.WAD
 [4]: src/net_websockets.c
 [5]: https://silentspacemarine.com
+[6]: src/index.html
+[7]: https://blog.cloudflare.com/doom-multiplayer-workers
+[8]: https://github.com/cloudflare/doom-workers
