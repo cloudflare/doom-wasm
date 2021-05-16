@@ -1,0 +1,13 @@
+Makefile
+Makefile.in
+.deps
+*.rc
+websockets-doom.*
+*.cfg
+*.exe
+*.desktop
+*.txt
+!CMakeLists.txt
+*.metainfo.xml
+tags
+TAGS
