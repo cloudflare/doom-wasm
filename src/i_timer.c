@@ -17,6 +17,7 @@
 //
 
 #include "SDL.h"
+#include <emscripten.h>
 
 #include "i_timer.h"
 #include "doomtype.h"
@@ -62,7 +63,8 @@ int I_GetTimeMS(void)
 
 void I_Sleep(int ms)
 {
-    SDL_Delay(ms);
+    // SDL_Delay(ms);
+    emscripten_sleep(ms);
 }
 
 void I_WaitVBL(int count)

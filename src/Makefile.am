@@ -18,25 +18,6 @@ i_system.c           i_system.h            \
 m_argv.c             m_argv.h              \
 m_misc.c             m_misc.h
 
-# Dedicated server (chocolate-server):
-
-DEDSERV_FILES=\
-d_dedicated.c                              \
-d_iwad.c             d_iwad.h              \
-d_mode.c             d_mode.h              \
-deh_str.c            deh_str.h             \
-i_timer.c            i_timer.h             \
-m_config.c           m_config.h            \
-net_common.c         net_common.h          \
-net_dedicated.c      net_dedicated.h       \
-net_io.c             net_io.h              \
-net_packet.c         net_packet.h          \
-net_sdl.c            net_sdl.h             \
-net_query.c          net_query.h           \
-net_server.c         net_server.h          \
-net_structrw.c       net_structrw.h        \
-z_native.c           z_zone.h
-
 # Source files used by the game binaries (chocolate-doom, etc.)
 
 GAME_SOURCE_FILES=\
@@ -84,7 +65,6 @@ net_websockets.c     net_websockets.h      \
 net_packet.c         net_packet.h          \
 net_petname.c        net_petname.h         \
 net_query.c          net_query.h           \
-net_sdl.c            net_sdl.h             \
 net_server.c         net_server.h          \
 net_structrw.c       net_structrw.h        \
 sha1.c               sha1.h                \

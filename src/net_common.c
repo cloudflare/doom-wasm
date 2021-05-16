@@ -31,12 +31,12 @@
 #include "net_structrw.h"
 
 // connections time out after 30 seconds
-
-#define CONNECTION_TIMEOUT_LEN 30
+// we changed this for websockets
+#define CONNECTION_TIMEOUT_LEN 4
 
 // maximum time between sending packets
 
-#define KEEPALIVE_PERIOD 1
+#define KEEPALIVE_PERIOD 2
 
 // reliable packet that is guaranteed to reach its destination
 
@@ -211,7 +211,7 @@ boolean NET_Conn_Packet(net_connection_t *conn, net_packet_t *packet, unsigned i
     if (*packet_type & NET_RELIABLE_PACKET) {
         if (NET_Conn_ReliablePacket(conn, packet)) {
             // Invalid packet: eat it.
-            printf("FUCKING INVALID PACKET DUDE\n");
+            printf("Got invalid packet. Eating it.\n");
             return true;
         }
 

@@ -18,3 +18,4 @@ config.status
 stamp-h1
 clean
 src/doom1.wad
+.githelp
