@@ -23,7 +23,7 @@ There are two scripts to facilitate compiling Wasm Doom:
 
 ## Running
 
-Copy the shareware version of [doom1.wad][3] do ./src (make sure it has the name doom1.wad)
+Copy the shareware version of [doom1.wad][3] to [./src][9] (make sure it has the name doom1.wad)
 
 Then:
 
@@ -52,3 +52,4 @@ Chocolate Doom and this port are distributed under the GNU GPL. See the COPYING 
 [6]: src/index.html
 [7]: https://blog.cloudflare.com/doom-multiplayer-workers
 [8]: https://github.com/cloudflare/doom-workers
+[9]: src
