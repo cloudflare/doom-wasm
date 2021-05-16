@@ -38,7 +38,9 @@ Doom should start.
 
 Inspect src/index.html for startup details.
 
-Check our [Edge Doom][5] tech demo for a live multiplayer version.
+Check our live multiplayer [demo][5].
+
+## License
 
 Chocolate Doom and this port are distributed under the GNU GPL. See the COPYING file for more information.
 
@@ -46,4 +48,4 @@ Chocolate Doom and this port are distributed under the GNU GPL. See the COPYING 
 [2]: https://emscripten.org/
 [3]: https://doomwiki.org/wiki/DOOM1.WAD
 [4]: src/net_websockets.c
-[5]: https://edgedoom.com
+[5]: https://silentspacemarine.com
