@@ -45,6 +45,7 @@ uint32_t ips[MAX_QUEUE_SIZE];
 
 static void WebsocketsQueueInit(packet_queue_t *queue) { queue->head = queue->tail = 0; }
 
+// Pushes one packet into the queue
 static void WebsocketsQueuePush(packet_queue_t *queue, net_packet_t *packet, uint32_t from)
 {
     int new_tail;
@@ -68,6 +69,7 @@ static EMSCRIPTEN_WEBSOCKET_T websocket;
 static EmscriptenWebSocketCreateAttributes attr;
 static boolean inittedWebSockets = false;
 
+// Pops one packet from the queue
 static ws_packet_t *WebsocketsQueuePop(packet_queue_t *queue)
 {
     if (queue->tail == queue->head) {
