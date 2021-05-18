@@ -1,6 +1,6 @@
 # Wasm Doom
 
-This is a [Chocolate Doom][1] Web Assembly port with WebSockets [support][4].
+This is a [Chocolate Doom][1] WebAssembly port with WebSockets [support][4].
 
 ## Requirements
 
