@@ -12,6 +12,8 @@ brew install automake
 brew install sdl2 sdl2_mixer sdl2_net
 ```
 
+Linux users will need to install `emscripten` and then add emscripten to your PATH `export PATH=$PATH:/usr/lib/emscripten`
+
 ## Compiling
 
 There are two scripts to facilitate compiling Wasm Doom:
