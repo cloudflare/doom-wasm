@@ -6,7 +6,7 @@ This is a [Chocolate Doom][1] WebAssembly port with WebSockets [support][4].
 
 You need to install Emscripten and a few other tools first:
 
-```
+```bash
 brew install emscripten
 brew install automake
 brew install sdl2 sdl2_mixer sdl2_net
@@ -18,7 +18,7 @@ Linux users will need to install `emscripten` and then add emscripten to your PA
 
 There are two scripts to facilitate compiling Wasm Doom:
 
-```
+```bash
 ./scripts/clean.sh
 ./scripts/build.sh
 ```
@@ -27,11 +27,17 @@ There are two scripts to facilitate compiling Wasm Doom:
 
 Copy the shareware version of [doom1.wad][3] to [./src][9] (make sure it has the name doom1.wad)
 
-Then:
+Then start a web server in `src` directory using python:
 
-```
+```bash
 cd src
 python -m SimpleHTTPServer
+```
+
+or using PHP
+```bash
+cd src
+php -e -S "localhost:8000"
 ```
 
 Then open your browser and point it to http://0.0.0.0:8000/
