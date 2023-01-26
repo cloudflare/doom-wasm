@@ -1,106 +1,115 @@
 <!DOCTYPE html>
 <html lang="en-us">
-    <head>
-        <title>Websockets Doom</title>
-        <link rel="shortcut icon" href="favicon.ico" type="image/x-icon" />
-        <style>
-            @font-face {
-                font-family: "VT323";
-                font-style: normal;
-                font-weight: 400;
-                src: url(https://fonts.gstatic.com/s/vt323/v12/pxiKyp0ihIEF2isfFJXUdVNF.woff2) format("woff2");
-                unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
-            }
 
-            * {
-                box-sizing: border-box;
-            }
+<head>
+    <title>Doom Wasm PWA</title>
+    <link rel="shortcut icon" href="/static/images/icons/chocolate-doom_icon_x192.png" type="image/png" />
+    <link rel="manifest" href="/static/manifest.json">
 
-            html {
-                font-family: "VT323", monospace;
-                font-size: 12px;
-            }
+    <link rel="apple-touch-icon" href="/static/images/icons/chocolate-doom_icon_x192.png">
+    <meta name="apple-mobile-web-app-status-bar" content="#000000">
+    <meta name="theme-color" content="#000000">
+    <style>
+        @font-face {
+            font-family: "VT323";
+            font-style: normal;
+            font-weight: 400;
+            src: url(https://fonts.gstatic.com/s/vt323/v12/pxiKyp0ihIEF2isfFJXUdVNF.woff2) format("woff2");
+            unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+        }
 
-            body {
-                background-color: #111;
-                margin: 0;
-                padding: 2ch;
-                /* vietnamese */
-            }
+        * {
+            box-sizing: border-box;
+        }
 
-            #container {
-                max-width: 930px;
-                margin: auto;
-            }
+        html {
+            font-family: "VT323", monospace;
+            font-size: 12px;
+        }
 
-            .frame {
-                padding-right: 0;
-                margin-left: auto;
-                margin-right: auto;
-                display: block;
-            }
+        body {
+            background-color: #111;
+            margin: 0;
+            padding: 2ch;
+            /* vietnamese */
+        }
 
-            /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
-            canvas.frame {
-                background-color: black;
-                width: 800px;
-                height: 600px;
-            }
-        </style>
-        <meta name="viewport" content="width=device-width,initial-scale=1" />
-    </head>
-    <body>
-        <div id="container" class="noselect">
-            <canvas class="frame" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
-        </div>
-        <script>
-            var commonArgs = ["-iwad", "doom1.wad", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
+        #container {
+            max-width: 930px;
+            margin: auto;
+        }
 
-            var Module = {
-                onRuntimeInitialized: () => {
-                    callMain(commonArgs);
-                },
-                noInitialRun: true,
-                preRun: () => {
-                    Module.FS.createPreloadedFile("", "doom1.wad", "doom1.wad", true, true);
-                    Module.FS.createPreloadedFile("", "default.cfg", "default.cfg", true, true);
-                },
-                printErr: function (text) {
-                    if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(" ");
-                    console.error(text);
-                },
-                canvas: (function () {
-                    var canvas = document.getElementById("canvas");
-                    canvas.addEventListener(
-                        "webglcontextlost",
-                        function (e) {
-                            alert("WebGL context lost. You will need to reload the page.");
-                            e.preventDefault();
-                        },
-                        false
-                    );
-                    return canvas;
-                })(),
-                print: function (text) {
-                    console.log(text);
-                },
-                setStatus: function (text) {
-                    console.log(text);
-                },
-                totalDependencies: 0,
-                monitorRunDependencies: function (left) {
-                    this.totalDependencies = Math.max(this.totalDependencies, left);
-                    Module.setStatus(left ? "Preparing... (" + (this.totalDependencies - left) + "/" + this.totalDependencies + ")" : "All downloads complete.");
-                },
+        .frame {
+            padding-right: 0;
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+        }
+
+        /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+        canvas.frame {
+            background-color: black;
+            width: 800px;
+            height: 600px;
+        }
+    </style>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+</head>
+
+<body>
+    <div id="container" class="noselect">
+        <canvas class="frame" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
+    </div>
+    <script>
+        var commonArgs = ["-iwad", "doom1.wad", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
+
+        var Module = {
+            onRuntimeInitialized: () => {
+                callMain(commonArgs);
+            },
+            noInitialRun: true,
+            preRun: () => {
+                Module.FS.createPreloadedFile("", "doom1.wad", "doom1.wad", true, true);
+                Module.FS.createPreloadedFile("", "default.cfg", "default.cfg", true, true);
+            },
+            printErr: function (text) {
+                if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(" ");
+                console.error(text);
+            },
+            canvas: (function () {
+                var canvas = document.getElementById("canvas");
+                canvas.addEventListener(
+                    "webglcontextlost",
+                    function (e) {
+                        alert("WebGL context lost. You will need to reload the page.");
+                        e.preventDefault();
+                    },
+                    false
+                );
+                return canvas;
+            })(),
+            print: function (text) {
+                console.log(text);
+            },
+            setStatus: function (text) {
+                console.log(text);
+            },
+            totalDependencies: 0,
+            monitorRunDependencies: function (left) {
+                this.totalDependencies = Math.max(this.totalDependencies, left);
+                Module.setStatus(left ? "Preparing... (" + (this.totalDependencies - left) + "/" + this.totalDependencies + ")" : "All downloads complete.");
+            },
+        };
+
+        window.onerror = function (event) {
+            Module.setStatus("Exception thrown, see JavaScript console");
+            Module.setStatus = function (text) {
+                if (text) Module.printErr("[post-exception status] " + text);
             };
+        };
+    </script>
+    <script type="text/javascript" src="websockets-doom.js"></script>
+    <script src="/static/js/app.js"></script>
+</body>
 
-            window.onerror = function (event) {
-                Module.setStatus("Exception thrown, see JavaScript console");
-                Module.setStatus = function (text) {
-                    if (text) Module.printErr("[post-exception status] " + text);
-                };
-            };
-        </script>
-        <script type="text/javascript" src="websockets-doom.js"></script>
-    </body>
 </html>

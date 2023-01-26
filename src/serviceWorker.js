@@ -1,5 +1,5 @@
 const BasePath = ''
-const staticfilesPWA = "StaticFiles_v0.2-alpha"
+const staticfilesPWA = "StaticFiles_v0.1-alpha"
 
 const assets = [
     `${BasePath}/`,
