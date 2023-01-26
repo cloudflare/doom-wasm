@@ -1,6 +1,6 @@
-# Wasm Doom
+# Doom Wasm PWA App
 
-This is a [Chocolate Doom][1] WebAssembly port with WebSockets [support][4].
+This is a [Chocolate Doom][1] WebAssembly PWA App port with WebSockets [support][4].
 
 ## Requirements
 
@@ -29,7 +29,7 @@ Then:
 
 ```
 cd src
-python -m SimpleHTTPServer
+python -m http.server
 ```
 
 Then open your browser and point it to http://0.0.0.0:8000/
@@ -57,6 +57,46 @@ doom: 9, disconnected from server
 doom: 10, game started
 doom: 11, entering fullscreen
 doom: 12, client '%s' timed out and disconnected
+```
+
+# Build and Run with Docker?
+
+### Dockerfile:
+```Dockerfile
+FROM emscripten/emsdk AS builder
+
+WORKDIR /usr/doom
+
+RUN apt update
+RUN apt list --upgradable
+
+RUN apt install automake git wget libsdl2-dev libsdl2-mixer-dev libsdl2-net-dev -y
+
+# Add doom1.wad file URL
+RUN wget <doom1.wad>
+
+RUN git clone https://github.com/Saketh-Chandra/doom-wasm-pwa
+
+RUN mv doom1.wad doom-wasm-pwa/src
+
+RUN ./doom-wasm-pwa/scripts/clean.sh
+RUN ./doom-wasm-pwa/scripts/build.sh
+
+FROM python:alpine3.17 AS Final
+
+COPY --from=builder /usr/doom/doom-wasm-pwa/ doom-wasm-pwa
+
+EXPOSE 8000
+ENTRYPOINT ["python3","-m","http.server","-d","./doom-wasm-pwa/src"]
+```
+#### Save the Docker Script into Dockerfile
+### Build:
+```bash
+docker build -t doom_wasm_pwa .
+```
+### Run:
+```bash
+docker run --name doom_wasm_pwa -p 8000:8000 doom_wasm_pwa
 ```
 
 ## License
