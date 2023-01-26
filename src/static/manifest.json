@@ -1,0 +1,23 @@
+{
+  "name": "Doom Wasm PWA",
+  "short_name": "DOOM",
+  "display": "standalone",
+  "start_url": "/",
+  "scope": "/",
+  "theme_color": "#000",
+  "background_color": "#3367D6",
+  "icons": [
+    {
+      "src": "/static/images/icons/chocolate-doom_icon_x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    },
+    {
+      "src": "/static/images/icons/chocolate-doom_icon_x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
+      "purpose": "any"
+    }
+
+  ]
+}
