@@ -16,6 +16,12 @@
       "src": "/static/images/icons/chocolate-doom_icon_x192.png",
       "type": "image/png",
       "sizes": "192x192",
+      "purpose": "maskable"
+    },
+    {
+      "src": "/static/images/icons/chocolate-doom_icon_x192.png",
+      "type": "image/png",
+      "sizes": "192x192",
       "purpose": "any"
     }
 

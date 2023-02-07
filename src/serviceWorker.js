@@ -1,5 +1,5 @@
 const BasePath = ''
-const staticfilesPWA = "StaticFiles_v0.1-alpha"
+const staticfilesPWA = "StaticFiles_v0.1.1-alpha"
 
 const assets = [
     `${BasePath}/`,
@@ -8,7 +8,7 @@ const assets = [
     `${BasePath}/static/images/icons/chocolate-doom_icon_x192.png`,
 
     `${BasePath}/websockets-doom.js`,
-    `${BasePath}/doom1.wad`, 
+    `${BasePath}/doom1.wad`,
     `${BasePath}/default.cfg`,
     `${BasePath}/websockets-doom.wasm`,
 

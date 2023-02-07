@@ -3,12 +3,15 @@
 
 <head>
     <title>Doom Wasm PWA</title>
+    <meta charset="UTF-8">
+    <meta name="description" content="Doom Wasm PWA port.">
     <link rel="shortcut icon" href="/static/images/icons/chocolate-doom_icon_x192.png" type="image/png" />
     <link rel="manifest" href="/static/manifest.json">
 
     <link rel="apple-touch-icon" href="/static/images/icons/chocolate-doom_icon_x192.png">
     <meta name="apple-mobile-web-app-status-bar" content="#000000">
     <meta name="theme-color" content="#000000">
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
     <style>
         @font-face {
             font-family: "VT323";
@@ -49,67 +52,67 @@
         /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
         canvas.frame {
             background-color: black;
-            width: 800px;
-            height: 600px;
+            width: 80%;
+            height: 60%;
+        }
+
+        @keyframes showPopup {
+            0% {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateX(80%);
+            }
+        }
+
+        @keyframes hidePopup {
+            0% {
+                opacity: 1;
+                transform: translateX(80%);
+            }
+
+            100% {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        #alert-container {
+            font-size: 15px;
+            animation: showPopup 0.5s ease-in-out forwards;
+        }
+
+        #footer {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 20px;
+            color: white;
         }
     </style>
-    <meta name="viewport" content="width=device-width,initial-scale=1" />
 </head>
 
 <body>
+
     <div id="container" class="noselect">
         <canvas class="frame" id="canvas" oncontextmenu="event.preventDefault()" tabindex="-1"></canvas>
     </div>
-    <script>
-        var commonArgs = ["-iwad", "doom1.wad", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
 
-        var Module = {
-            onRuntimeInitialized: () => {
-                callMain(commonArgs);
-            },
-            noInitialRun: true,
-            preRun: () => {
-                Module.FS.createPreloadedFile("", "doom1.wad", "doom1.wad", true, true);
-                Module.FS.createPreloadedFile("", "default.cfg", "default.cfg", true, true);
-            },
-            printErr: function (text) {
-                if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(" ");
-                console.error(text);
-            },
-            canvas: (function () {
-                var canvas = document.getElementById("canvas");
-                canvas.addEventListener(
-                    "webglcontextlost",
-                    function (e) {
-                        alert("WebGL context lost. You will need to reload the page.");
-                        e.preventDefault();
-                    },
-                    false
-                );
-                return canvas;
-            })(),
-            print: function (text) {
-                console.log(text);
-            },
-            setStatus: function (text) {
-                console.log(text);
-            },
-            totalDependencies: 0,
-            monitorRunDependencies: function (left) {
-                this.totalDependencies = Math.max(this.totalDependencies, left);
-                Module.setStatus(left ? "Preparing... (" + (this.totalDependencies - left) + "/" + this.totalDependencies + ")" : "All downloads complete.");
-            },
-        };
+    <div id="alert-container" style="display: none; padding: 10px; border-radius: 5px;">
+        <strong id="alert-message-header" style="color: red;"></strong>
+        <span id="alert-message"></span>.
+        <button style="float: right; background-color: white; border: none; font-size: 16px; cursor: pointer;"
+            onclick="this.parentElement.style.display='none'">&times;</button>
+    </div>
 
-        window.onerror = function (event) {
-            Module.setStatus("Exception thrown, see JavaScript console");
-            Module.setStatus = function (text) {
-                if (text) Module.printErr("[post-exception status] " + text);
-            };
-        };
-    </script>
-    <script type="text/javascript" src="websockets-doom.js"></script>
+
+    <div id="footer"></div>
     <script src="/static/js/app.js"></script>
+    <script type="text/javascript" src="websockets-doom.js"></script>
+
 </body>
 
 </html>
