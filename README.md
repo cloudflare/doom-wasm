@@ -2,6 +2,15 @@
 
 This is a [Chocolate Doom][1] WebAssembly PWA App port with WebSockets [support][4].
 
+## PWA Support [New]
+- Installable: The app can be installed on your device, just like a native app, for a seamless experience.
+    - Install the app on your device by clicking the "Add to Home Screen" button in your browser's menu.
+    - Launch the app and start playing the game.
+- Offline: Once installed, the app can be run offline, allowing you to play the game even when there's no internet connection.
+## With Save Game Support [New]
+- F2 (In game) to Save game to Wasm File System
+- Ctrl + S to copy Savefile from  Wasm File System to Cache Storage
+- Retrieve Savefile (Wasm File System) From Cache (On Game load)
 ## Requirements
 
 You need to install Emscripten and a few other tools first:
