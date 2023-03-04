@@ -1,5 +1,21 @@
-const saveGameAssets = "saveGameAssets_v0.1-alpha"
-var commonArgs = ["-iwad", "doom1.wad", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare", "-savedir", "/savefiles"]
+const saveGameAssets = "saveGameAssets_v0.1.1-alpha"
+var iwadfile
+var staticfilesPWA = "StaticFiles_v"
+
+const cacheNamePattern = /^StaticFiles_v\d+\.\d+\.\d+(?:-\w+)?$/;
+
+caches.keys().then(cacheNames => {
+    cacheNames.forEach(cacheName => {
+        if (cacheName.match(cacheNamePattern)) {
+            console.log(`Cache ${cacheName}`);
+            staticfilesPWA = cacheName
+            return
+        }
+    });
+});
+
+
+// var iwadfile = "freedoom1.wad"
 
 
 if ("serviceWorker" in navigator) {
@@ -10,6 +26,52 @@ if ("serviceWorker" in navigator) {
             .catch(err => console.log("service worker not registered", err));
     });
 }
+
+
+
+// Get the drop-down menu element
+const dropdown = document.getElementById("myDropdown");
+const defaultOption = document.createElement("option");
+defaultOption.text = "Select a wad file";
+defaultOption.disabled = true;
+defaultOption.selected = true;
+dropdown.add(defaultOption);
+
+// Add an event listener to the drop-down menu
+dropdown.addEventListener("click", function () {
+    // Get the options from the service worker cache
+    caches.open(staticfilesPWA).then(function (cache) {
+        cache.keys().then(function (keys) {
+            // Create an array of option elements based on the cached HTML files with the extension .wad
+            const options = keys
+                .filter(function (request) {
+                    // Filter the cached HTML files to only those with the extension .wad
+                    return request.url.endsWith(".wad");
+                })
+                .map(function (request) {
+                    const option = document.createElement("option");
+                    // Get the file name from the URL of the cached HTML file
+                    const fileName = request.url.substring(request.url.lastIndexOf('/') + 1);
+                    option.value = fileName;
+                    option.text = fileName;
+                    return option;
+                });
+
+            // Remove all existing options from the drop-down menu
+            for (let i = dropdown.options.length - 1; i >= 1; i--) {
+                dropdown.remove(i);
+            }
+
+
+            // Add the new options to the drop-down menu
+            options.forEach(function (option) {
+                dropdown.add(option);
+            });
+        });
+    });
+});
+
+
 
 
 //showAlert
@@ -114,13 +176,47 @@ async function retrieveFileSystemDataFromCache() {
 }
 
 
+
 var Module = {
     onRuntimeInitialized: () => {
-        callMain(commonArgs);
+        dropdown.addEventListener("change", function () {
+            // Get the selected value
+            iwadfile = dropdown.value;
+            var commonArgs = ["-iwad", `${iwadfile}`, "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare", "-savedir", "/savefiles", "-autojoin", " -left", "-window"]
+
+            console.log(commonArgs)
+            const canvas = document.getElementById("canvas");
+            // canvas.oncontextmenu = event.preventDefault()
+            canvas.tabIndex = "-1"
+            canvas.style.display = "block"
+
+
+            callMain(commonArgs);
+
+        });
+
+
     },
     noInitialRun: true,
     preRun: () => {
-        Module.FS.createPreloadedFile("", "doom1.wad", "doom1.wad", true, true);
+        console.log(`preRun----`)
+        caches.open(staticfilesPWA).then(function (cache) {
+            cache.keys().then(function (keys) {
+                // Create an array of option elements based on the cached HTML files with the extension .wad
+                const options = keys
+                    .filter(function (request) {
+                        // Filter the cached HTML files to only those with the extension .wad
+                        return request.url.endsWith(".wad");
+                    })
+                    .map(function (request) {
+                        // Get the file name from the URL of the cached HTML file
+                        const fileName = request.url.substring(request.url.lastIndexOf('/') + 1);
+                        console.log(fileName)
+                        Module.FS.createPreloadedFile("", `${fileName}`, `${fileName}`, true, true);
+                    });
+            })
+        })
+
         Module.FS.createPreloadedFile("", "default.cfg", "default.cfg", true, true);
 
     },
@@ -162,6 +258,9 @@ window.onerror = function (event) {
         if (text) Module.printErr("[post-exception status] " + text);
     };
 };
+
+
+
 
 
 //Footer
