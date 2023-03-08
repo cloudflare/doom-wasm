@@ -1,21 +1,6 @@
 const saveGameAssets = "saveGameAssets_v0.1.1-alpha"
+const doomWADFiles = "doomWADFiles_v0.1"
 var iwadfile
-var staticfilesPWA = "StaticFiles_v"
-
-const cacheNamePattern = /^StaticFiles_v\d+\.\d+\.\d+(?:-\w+)?$/;
-
-caches.keys().then(cacheNames => {
-    cacheNames.forEach(cacheName => {
-        if (cacheName.match(cacheNamePattern)) {
-            console.log(`Cache ${cacheName}`);
-            staticfilesPWA = cacheName
-            return
-        }
-    });
-});
-
-
-// var iwadfile = "freedoom1.wad"
 
 
 if ("serviceWorker" in navigator) {
@@ -31,22 +16,20 @@ if ("serviceWorker" in navigator) {
 
 // Get the drop-down menu element
 const dropdown = document.getElementById("myDropdown");
-const defaultOption = document.createElement("option");
-defaultOption.text = "Select a wad file";
-defaultOption.disabled = true;
-defaultOption.selected = true;
-dropdown.add(defaultOption);
+// Create the file input field
+const fileInput = document.getElementById('file-input')
+
 
 // Add an event listener to the drop-down menu
 dropdown.addEventListener("click", function () {
     // Get the options from the service worker cache
-    caches.open(staticfilesPWA).then(function (cache) {
+    caches.open(doomWADFiles).then(function (cache) {
         cache.keys().then(function (keys) {
             // Create an array of option elements based on the cached HTML files with the extension .wad
             const options = keys
                 .filter(function (request) {
                     // Filter the cached HTML files to only those with the extension .wad
-                    return request.url.endsWith(".wad");
+                    return (request.url.endsWith('.wad') || request.url.endsWith('.WAD'));
                 })
                 .map(function (request) {
                     const option = document.createElement("option");
@@ -175,38 +158,52 @@ async function retrieveFileSystemDataFromCache() {
     console.groupEnd()
 }
 
+function handleFileUpload(input) {
+    const file = input.files[0];
+    const reader = new FileReader();
+    reader.onload = () => {
+        const content = new Uint8Array(reader.result);
+        const fileName = file.name;
+        const url = URL.createObjectURL(new Blob([content], { type: 'application/octet-stream' }));
+        FS.createPreloadedFile('/', fileName, url, true, true);
+        console.log(`File '${fileName}' uploaded and saved to the FS.`);
+
+        // Upload file to cache
+        const response = new Response(content);
+        caches.open(doomWADFiles).then(cache => {
+            cache.put(fileName, response);
+            console.log(`File '${fileName}' uploaded to cache.`);
+        })
+
+    };
+    reader.readAsArrayBuffer(file);
+}
 
 
 var Module = {
-    onRuntimeInitialized: () => {
-        dropdown.addEventListener("change", function () {
-            // Get the selected value
-            iwadfile = dropdown.value;
-            var commonArgs = ["-iwad", `${iwadfile}`, "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare", "-savedir", "/savefiles", "-autojoin", " -left", "-window"]
+    run(iwadfile) {
+        console.log(`Running ${iwadfile}`)
+        var commonArgs = ["-iwad", `${iwadfile}`, "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare", "-savedir", "/savefiles", "-autojoin", " -left", "-window"]
 
-            console.log(commonArgs)
-            const canvas = document.getElementById("canvas");
-            // canvas.oncontextmenu = event.preventDefault()
-            canvas.tabIndex = "-1"
-            canvas.style.display = "block"
+        hideDropdown()
+        const canvas = document.getElementById("canvas");
+        canvas.tabIndex = "-1"
+        canvas.style.display = "block"
 
-
-            callMain(commonArgs);
-
-        });
-
-
+        callMain(commonArgs);
     },
+
     noInitialRun: true,
     preRun: () => {
-        console.log(`preRun----`)
-        caches.open(staticfilesPWA).then(function (cache) {
+        fileInput.addEventListener('change', () => handleFileUpload(fileInput));
+
+        caches.open(doomWADFiles).then(function (cache) {
             cache.keys().then(function (keys) {
                 // Create an array of option elements based on the cached HTML files with the extension .wad
                 const options = keys
                     .filter(function (request) {
                         // Filter the cached HTML files to only those with the extension .wad
-                        return request.url.endsWith(".wad");
+                        return (request.url.endsWith('.wad') || request.url.endsWith('.WAD'));
                     })
                     .map(function (request) {
                         // Get the file name from the URL of the cached HTML file
@@ -249,7 +246,35 @@ var Module = {
         this.totalDependencies = Math.max(this.totalDependencies, left);
         Module.setStatus(left ? "Preparing... (" + (this.totalDependencies - left) + "/" + this.totalDependencies + ")" : "All downloads complete.");
     },
+
+    noExitRuntime: true,
+    onExit: function (status) {
+        const body = document.querySelector('body');
+        const message = document.createElement('h1');
+
+        if (status == 0) {
+            msg = 'Thanks for playing!';
+        } else {
+            // The application exited with an error
+            msg = 'Oops! Something went wrong. Please try again.';
+        }
+
+        console.log(`Message: ${msg}, Exit Status: ${status}`);
+        message.innerText = msg
+        message.classList.add('exit-header');
+        body.appendChild(message);
+
+        const link = document.createElement('a');
+        link.href = 'https://github.com/Saketh-Chandra/doom-wasm-pwa';
+        link.innerText = 'View on GitHub';
+        link.className = 'github-link';
+
+        body.appendChild(link);
+
+
+    }
 };
+
 
 
 window.onerror = function (event) {
@@ -260,8 +285,22 @@ window.onerror = function (event) {
 };
 
 
+dropdown.addEventListener("change", function () {
+    // Get the selected value
+    iwadfile = dropdown.value;
+    const canvas = document.getElementById("canvas");
+    // canvas.oncontextmenu = event.preventDefault()
+    canvas.tabIndex = "-1"
+    canvas.style.display = "block"
 
+    Module.run(iwadfile);
 
+});
+
+function hideDropdown() {
+    var dropdown = document.querySelector(".dropdown-container");
+    dropdown.style.display = "none";
+}
 
 //Footer
 let text = [

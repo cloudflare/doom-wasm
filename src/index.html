@@ -34,7 +34,6 @@
             background-color: #111;
             margin: 0;
             padding: 2ch;
-            /* vietnamese */
         }
 
         #container {
@@ -92,12 +91,82 @@
             font-size: 20px;
             color: white;
         }
+
+        .dropdown-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            margin: 10px 0;
+        }
+
+        label {
+            font-size: 16px;
+            margin-bottom: 5px;
+            color: white;
+        }
+
+        input[type="file"] {
+            color: white;
+        }
+
+        select,
+        input[type="file"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0;
+            font-size: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+
+        /* Media query for mobile devices */
+        @media screen and (max-width: 600px) {
+
+            select,
+            input[type="file"] {
+                width: 90%;
+            }
+        }
+
+        /* Media query for desktop devices */
+        @media screen and (min-width: 601px) {
+
+            select,
+            input[type="file"] {
+                width: 50%;
+            }
+        }
+
+        .exit-header {
+            font-size: 48px;
+            text-align: center;
+            color: white;
+        }
+
+        .github-link {
+            color: blue;
+            font-size: 24px;
+            text-decoration: none;
+            text-align: center;
+            font-weight: bold;
+            display: block;
+            margin-top: 10px;
+        }
     </style>
 </head>
 
 <body>
-    <select id="myDropdown">
-      </select>
+    <div class="dropdown-container">
+        <label for="file-input">Choose a wad file:</label>
+        <select id="myDropdown">
+            <option disabled selected>Select a wad file</option>
+        </select>
+        <input type="file" id="file-input" name="file" accept=".wad">
+    </div>
 
     <div id="container" class="noselect">
         <canvas class="frame" id="canvas" style="display: none;"></canvas>
