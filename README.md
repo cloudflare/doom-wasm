@@ -11,6 +11,13 @@ This is a [Chocolate Doom][1] WebAssembly PWA App port with WebSockets [support]
 - F2 (In game) to Save game to Wasm File System
 - Ctrl + S to copy Savefile from  Wasm File System to Cache Storage
 - Retrieve Savefile (Wasm File System) From Cache (On Game load)
+## Multi Select WAD files [New]
+- We can Select or Upload WAD files.
+    * Tested with:
+        * Doom 1 (Shareware and Ultimate Doom)
+        * Doom 2
+        * Freedoom 1
+        * Freedoom 2
 ## Requirements
 
 You need to install Emscripten and a few other tools first:
