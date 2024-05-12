@@ -26,6 +26,7 @@
             buildInputs = [
               # build tools
               pkgs.emscripten
+              pkgs.ccls
               pkgs.autoconf
               pkgs.automake
               pkgs.gnumake
