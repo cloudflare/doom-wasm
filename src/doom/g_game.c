@@ -69,6 +69,9 @@
 #include "r_data.h"
 #include "r_sky.h"
 
+// Hydra extensions
+#include "hydra.h"
+
 #include "g_game.h"
 
 #define SAVEGAMESIZE 0x2c000
@@ -795,6 +798,7 @@ void G_Ticker(void)
             printf("hydra send: forwardmove=%i buttons=%i\n",
                    cmd->forwardmove,
                    cmd->buttons);
+            hydra_send(cmd);
             memcpy(cmd, &netcmds[i], sizeof(ticcmd_t));
 
             if (demoplayback) G_ReadDemoTiccmd(cmd);
@@ -1675,7 +1679,9 @@ void G_InitNew(skill_t skill, int episode, int map)
 
 void G_ReadDemoTiccmd(ticcmd_t *cmd)
 {
-    printf("hydra: wait next\n");
+    hydra_recv(cmd);
+    printf("hydra recv: forwardmove=%i\n", cmd->forwardmove);
+
     if (*demo_p == DEMOMARKER) {
         // end of demo data stream
         G_CheckDemoStatus();
