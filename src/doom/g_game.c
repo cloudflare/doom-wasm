@@ -791,6 +791,10 @@ void G_Ticker(void)
         if (playeringame[i]) {
             cmd = &players[i].cmd;
 
+
+            printf("hydra send: forwardmove=%i buttons=%i\n",
+                   cmd->forwardmove,
+                   cmd->buttons);
             memcpy(cmd, &netcmds[i], sizeof(ticcmd_t));
 
             if (demoplayback) G_ReadDemoTiccmd(cmd);
@@ -1671,6 +1675,7 @@ void G_InitNew(skill_t skill, int episode, int map)
 
 void G_ReadDemoTiccmd(ticcmd_t *cmd)
 {
+    printf("hydra: wait next\n");
     if (*demo_p == DEMOMARKER) {
         // end of demo data stream
         G_CheckDemoStatus();
@@ -1976,6 +1981,7 @@ void G_DoPlayDemo(void)
 
     usergame = false;
     demoplayback = true;
+    printf("hydra: connect and read from head\n");
 }
 
 //
