@@ -4,12 +4,10 @@ This is a [Chocolate Doom][1] WebAssembly port with WebSockets [support][4].
 
 ## Requirements
 
-You need to install Emscripten and a few other tools first:
+Start a nix shell or use nix-direnv to get the required dependencies.
 
 ```
-brew install emscripten
-brew install automake
-brew install sdl2 sdl2_mixer sdl2_net
+nix develop
 ```
 
 ## Compiling
