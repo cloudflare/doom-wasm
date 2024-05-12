@@ -26,8 +26,8 @@ Copy the shareware version of [doom1.wad][3] to [./src][9] (make sure it has the
 Then:
 
 ```
-cd src
-python -m SimpleHTTPServer
+curl https://distro.ibiblio.org/slitaz/sources/packages/d/doom1.wad -o src/doom1.wad
+simple-http-server -i src
 ```
 
 Then open your browser and point it to http://0.0.0.0:8000/

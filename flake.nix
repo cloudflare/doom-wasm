@@ -31,6 +31,7 @@
               pkgs.gnumake
               pkgs.python3
               pkgs.pkg-config
+              pkgs.simple-http-server
               # libs
               pkgs.SDL2
               pkgs.SDL2_mixer
