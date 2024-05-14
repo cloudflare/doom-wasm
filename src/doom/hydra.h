@@ -8,9 +8,9 @@
 
 // TODO: Find a better way to interface with JS
 
-EM_JS(void, hydra_send, (ticcmd_t *cmd), {
+EM_ASYNC_JS(void, hydra_send, (ticcmd_t *cmd), {
   console.log("glue out", "forwardmove", HEAPU8[cmd]);
-  hydraSend({
+  await hydraSend({
     forwardMove: HEAPU8[cmd]
   });
 });
