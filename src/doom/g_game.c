@@ -20,6 +20,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "d_player.h"
 #include "doomdef.h"
 #include "doomkeys.h"
 #include "doomstat.h"
@@ -744,6 +745,10 @@ void G_Ticker(void)
     int i;
     int buf;
     ticcmd_t *cmd;
+    playerstate_t player_state;
+    mobj_t *mo;
+    int killcount;
+
 
     // do player reborns if needed
     for (i = 0; i < MAXPLAYERS; i++)
@@ -751,6 +756,7 @@ void G_Ticker(void)
 
     // do things to change the game state
     while (gameaction != ga_nothing) {
+        printf("gameaction=%i", gameaction);
         switch (gameaction) {
         case ga_loadlevel:
             G_DoLoadLevel();
@@ -794,11 +800,6 @@ void G_Ticker(void)
         if (playeringame[i]) {
             cmd = &players[i].cmd;
 
-
-            printf("hydra send: forwardmove=%i buttons=%i\n",
-                   cmd->forwardmove,
-                   cmd->buttons);
-            hydra_send(cmd);
             memcpy(cmd, &netcmds[i], sizeof(ticcmd_t));
 
             if (demoplayback) G_ReadDemoTiccmd(cmd);
@@ -890,6 +891,28 @@ void G_Ticker(void)
     case GS_DEMOSCREEN:
         D_PageTicker();
         break;
+    }
+
+    // Send updated state to chain
+    for (i = 0; i < MAXPLAYERS; i++) {
+        if (playeringame[i]) {
+            player_state = players[i].playerstate;
+            killcount = players[i].killcount;
+            mo = &players[i].mo;
+
+            printf("hydra send: forwardmove=%i buttons=%i health=%i, floorz=%i, momx=%i, momy=%i, momz=%i, z=%i, angle=%i, x=%i, y=%i\n",
+                cmd->forwardmove,
+                cmd->buttons,
+                mo->health,
+                mo->floorz,
+                mo->momx,
+                mo->momy,
+                mo->momz,
+                mo->angle,
+                mo->x,
+                mo->y);
+            hydra_send(cmd, player_state, killcount, mo->health, mo->floorz, mo->momx, mo->momy, mo->momz, mo->z, mo->angle, gamestate);
+        }
     }
 }
 
@@ -2070,4 +2093,3 @@ boolean G_CheckDemoStatus(void)
 
     return false;
 }
-
