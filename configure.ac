@@ -1,4 +1,4 @@
-AC_INIT(Websockets Doom, 0.0.1, celso@cloudflare.com, doom-ws-wasm)
+AC_INIT([Websockets Doom],[0.0.1],[celso@cloudflare.com],[doom-ws-wasm])
 
 PACKAGE_SHORTNAME=${PACKAGE_NAME% Doom}
 PACKAGE_SHORTDESC="WASM WebSockets Chocolate Doom port"
@@ -201,7 +201,7 @@ AC_SUBST(PACKAGE_BUGREPORT)
 dnl Shut up the datarootdir warnings.
 AC_DEFUN([AC_DATAROOTDIR_CHECKED])
 
-AC_OUTPUT([
+AC_CONFIG_FILES([
 Makefile
 opl/Makefile
 opl/examples/Makefile
@@ -215,4 +215,5 @@ textscreen/Makefile
 textscreen/examples/Makefile
 textscreen/fonts/Makefile
 ])
+AC_OUTPUT
 

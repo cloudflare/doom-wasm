@@ -11,6 +11,8 @@
         pkgs = import nixpkgs { inherit system; };
       in
       {
+        packages.doom-wasm = pkgs.callPackage ./doom-wasm.nix { };
+
         devShells.default = pkgs.mkShell
           {
             # Workaround taken from
@@ -23,20 +25,22 @@
               # FIXME: Should use a better place, but needs to be an absolute path.
               CACHE = '/tmp/emscriptencache'
             '';
-            buildInputs = [
+            buildInputs = with pkgs; [
               # build tools
-              pkgs.emscripten
-              pkgs.ccls
-              pkgs.autoconf
-              pkgs.automake
-              pkgs.gnumake
-              pkgs.python3
-              pkgs.pkg-config
-              pkgs.simple-http-server
+              emscripten
+              ccls
+              autoconf
+              automake
+              gnumake
+              python3
+              pkg-config
+              simple-http-server
               # libs
-              pkgs.SDL2
-              pkgs.SDL2_mixer
-              pkgs.SDL2_net
+              SDL2
+              SDL2_mixer
+              SDL2_net
+              libpng.dev
+              libsamplerate
             ];
           };
       });
