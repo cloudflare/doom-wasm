@@ -915,8 +915,9 @@ void G_Ticker(void)
                 killcount = players[i].killcount;
                 mo = &players[i].mo;
 
-                printf("hydra send: forwardmove=%i buttons=%i health=%i, floorz=%i, momx=%i, momy=%i, momz=%i, z=%i, angle=%i, x=%i, y=%i\n",
+                printf("hydra send: forwardmove=%i sidemove=%i buttons=%i health=%i, floorz=%i, momx=%i, momy=%i, momz=%i, z=%i, angle=%i, x=%i, y=%i\n",
                     cmd->forwardmove,
+                    cmd->sidemove,
                     cmd->buttons,
                     mo->health,
                     mo->floorz,

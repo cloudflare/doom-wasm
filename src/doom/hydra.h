@@ -13,9 +13,9 @@
 // hydra_send(cmd, player_state, killcount, mo->health, mo->floorz, mo->momx, mo->momy, mo->momz, mo->z, mo->angle, gamestate);
 
 EM_ASYNC_JS(void, hydra_send, (ticcmd_t *cmd, playerstate_t playerstate, int killcount, int health, int floorz, int momx, int momy, int momz, int z, int angle, gamestate_t gamestate), {
-  console.log("hydra_send", "forwardmove", HEAPU8[cmd]);
   await hydraSend({
-    forwardMove: HEAPU8[cmd]
+    forwardMove: HEAP8[cmd],
+    sideMove: HEAP8[cmd+1],
   },
   {
     mapObject: {
@@ -44,7 +44,8 @@ EM_ASYNC_JS(void, hydra_recv, (ticcmd_t *cmd), {
   if (res == null) {
      return;
   }
-  HEAPU8[cmd] = res.forwardMove;
+  HEAP8[cmd] = res.forwardMove;
+  HEAP8[cmd+1] = res.sideMove;
   // FIXME: integrate more ticcmd_t fields
 });
 
