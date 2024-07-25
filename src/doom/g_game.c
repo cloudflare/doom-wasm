@@ -808,6 +808,11 @@ void G_Ticker(void)
             if(M_CheckParm("-hydra-recv") > 0) {
                 hydra_recv(cmd);
                 printf("hydra recv: forwardmove=%i\n", cmd->forwardmove);
+
+                // Do not play demo if we are only receiving
+                if(M_CheckParm("-hydra-send") == 0) {
+                    demoplayback = false;
+                }
             }
 
             if (demoplayback) G_ReadDemoTiccmd(cmd);
