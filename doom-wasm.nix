@@ -1,16 +1,17 @@
-{
-  lib,
-  autoconf,
-  automake,
-  gnumake,
-  python3,
-  pkg-config,
-  buildEmscriptenPackage,
-  libpng,
-  libsamplerate,
-  unar,
-  unzip,
-}: let
+{ lib
+, autoconf
+, automake
+, gnumake
+, python3
+, pkg-config
+, buildEmscriptenPackage
+, libpng
+, libsamplerate
+, unar
+, unzip
+,
+}:
+let
   ports = {
     ogg = {
       url = "https://github.com/emscripten-ports/ogg/archive/version_1.zip";
@@ -34,58 +35,56 @@
     };
   };
 in
-  buildEmscriptenPackage {
-    name = "doom-wasm";
+buildEmscriptenPackage {
+  name = "doom-wasm";
 
-    # EMCC_DEBUG = "2";
+  # EMCC_DEBUG = "2";
 
-    nativeBuildInputs = [
-      pkg-config
-      python3
-      unar
-      unzip
-    ];
+  nativeBuildInputs = [
+    pkg-config
+    python3
+    unar
+    unzip
+  ];
 
-    buildInputs = [
-      autoconf
-      automake
-      gnumake
-      libpng
-      libsamplerate
-    ];
+  buildInputs = [
+    autoconf
+    automake
+    gnumake
+  ];
 
-    src = ./.;
+  src = ./.;
 
-    configurePhase = ''
-      export EM_CACHE=$TMPDIR/.emscriptencache
+  configurePhase = ''
+    export EM_CACHE=$TMPDIR/.emscriptencache
 
-      mkdir -p $EM_CACHE/ports
+    mkdir -p $EM_CACHE/ports
 
-      pushd $EM_CACHE/ports
-      ${lib.concatStrings (builtins.attrValues (builtins.mapAttrs (name: value: ''
-          mkdir ${name}
-          pushd ${name}
-          echo ${value.url} > .emscripten_url
-          unar ${builtins.fetchurl value}
-          popd
-        '')
-        ports))}
-      popd
-      emconfigure autoreconf -fiv
-      ac_cv_exeext=".html" emconfigure ./configure --host=none-none-none || cat config.log
-    '';
+    pushd $EM_CACHE/ports
+    ${lib.concatStrings (builtins.attrValues (builtins.mapAttrs (name: value: ''
+        mkdir ${name}
+        pushd ${name}
+        echo ${value.url} > .emscripten_url
+        unar ${builtins.fetchurl value}
+        popd
+      '')
+      ports))}
+    popd
+    emconfigure autoreconf -fiv
+    ac_cv_exeext=".html" emconfigure ./configure --host=none-none-none || cat config.log
+  '';
 
-    buildPhase = ''
-      emmake make
-    '';
+  buildPhase = ''
+    emmake make
+  '';
 
-    installPhase = ''
-      mkdir -p $out
-      cp src/websockets-doom.html $out
-      cp src/websockets-doom.js $out
-      cp src/websockets-doom.wasm $out
-      cp src/websockets-doom.wasm.map $out
-    '';
+  installPhase = ''
+    mkdir -p $out
+    cp src/websockets-doom.html $out
+    cp src/websockets-doom.js $out
+    cp src/websockets-doom.wasm $out
+    cp src/websockets-doom.wasm.map $out
+  '';
 
-    checkPhase = ":";
-  }
+  checkPhase = ":";
+}
