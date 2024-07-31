@@ -802,6 +802,19 @@ void G_Ticker(void)
 
             memcpy(cmd, &netcmds[i], sizeof(ticcmd_t));
 
+            // Receive input from Hydra (the network)
+            // XXX: This indicates that we could also integrate hydra via the
+            // netcmds and d_net module system (like the net_websockets module)
+            if(M_CheckParm("-hydra-recv") > 0) {
+                hydra_recv(cmd);
+                printf("hydra recv: forwardmove=%i\n", cmd->forwardmove);
+
+                // Do not play demo if we are only receiving
+                if(M_CheckParm("-hydra-send") == 0) {
+                    demoplayback = false;
+                }
+            }
+
             if (demoplayback) G_ReadDemoTiccmd(cmd);
             if (demorecording) G_WriteDemoTiccmd(cmd);
 
@@ -893,25 +906,29 @@ void G_Ticker(void)
         break;
     }
 
-    // Send updated state to chain
-    for (i = 0; i < MAXPLAYERS; i++) {
-        if (playeringame[i]) {
-            player_state = players[i].playerstate;
-            killcount = players[i].killcount;
-            mo = &players[i].mo;
+    // Send updated state to Hydra
+    // FIXME: only send our own state
+    if(M_CheckParm("-hydra-send") > 0) {
+        for (i = 0; i < MAXPLAYERS; i++) {
+            if (playeringame[i]) {
+                player_state = players[i].playerstate;
+                killcount = players[i].killcount;
+                mo = &players[i].mo;
 
-            printf("hydra send: forwardmove=%i buttons=%i health=%i, floorz=%i, momx=%i, momy=%i, momz=%i, z=%i, angle=%i, x=%i, y=%i\n",
-                cmd->forwardmove,
-                cmd->buttons,
-                mo->health,
-                mo->floorz,
-                mo->momx,
-                mo->momy,
-                mo->momz,
-                mo->angle,
-                mo->x,
-                mo->y);
-            hydra_send(cmd, player_state, killcount, mo->health, mo->floorz, mo->momx, mo->momy, mo->momz, mo->z, mo->angle, gamestate);
+                printf("hydra send: forwardmove=%i sidemove=%i buttons=%i health=%i, floorz=%i, momx=%i, momy=%i, momz=%i, z=%i, angle=%i, x=%i, y=%i\n",
+                    cmd->forwardmove,
+                    cmd->sidemove,
+                    cmd->buttons,
+                    mo->health,
+                    mo->floorz,
+                    mo->momx,
+                    mo->momy,
+                    mo->momz,
+                    mo->angle,
+                    mo->x,
+                    mo->y);
+                hydra_send(cmd, player_state, killcount, mo->health, mo->floorz, mo->momx, mo->momy, mo->momz, mo->z, mo->angle, gamestate);
+            }
         }
     }
 }
@@ -1702,9 +1719,6 @@ void G_InitNew(skill_t skill, int episode, int map)
 
 void G_ReadDemoTiccmd(ticcmd_t *cmd)
 {
-    hydra_recv(cmd);
-    printf("hydra recv: forwardmove=%i\n", cmd->forwardmove);
-
     if (*demo_p == DEMOMARKER) {
         // end of demo data stream
         G_CheckDemoStatus();
@@ -2010,7 +2024,6 @@ void G_DoPlayDemo(void)
 
     usergame = false;
     demoplayback = true;
-    printf("hydra: connect and read from head\n");
 }
 
 //
