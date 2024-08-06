@@ -10,6 +10,14 @@ Start a nix shell or use nix-direnv to get the required dependencies.
 nix develop
 ```
 
+## Building assets using nix:
+
+```
+nix build .#doom-wasm
+
+This will create a result symlink including all assets except the WAD file except the WAD file.
+```
+
 ## Compiling
 
 There are two scripts to facilitate compiling Wasm Doom:
