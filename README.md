@@ -2,7 +2,15 @@
 
 This is a [Chocolate Doom][1] WebAssembly port with WebSockets [support][4].
 
-## Requirements
+## Build
+
+Using `nix` a `result` symlink including all targets except the WAD file can be built:
+
+```
+nix build .#doom-wasm
+```
+
+## Developing
 
 Start a nix shell or use nix-direnv to get the required dependencies.
 
@@ -10,22 +18,14 @@ Start a nix shell or use nix-direnv to get the required dependencies.
 nix develop
 ```
 
-## Building assets using nix:
+For the first build use:
 
 ```
-nix build .#doom-wasm
-
-This will create a result symlink including all assets except the WAD file except the WAD file.
-```
-
-## Compiling
-
-There are two scripts to facilitate compiling Wasm Doom:
-
-```
-./scripts/clean.sh
 ./scripts/build.sh
 ```
+
+Which will build in the source tree `src/`. From there you can also use `make`
+to incrementally build targets.
 
 ## Running
 
