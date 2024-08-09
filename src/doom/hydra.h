@@ -12,7 +12,7 @@
 // TODO: Find a better way to interface with JS
 // hydra_send(cmd, player_state, killcount, mo->health, mo->floorz, mo->momx, mo->momy, mo->momz, mo->z, mo->angle, gamestate);
 
-EM_ASYNC_JS(void, hydra_send, (ticcmd_t *cmd, playerstate_t playerstate, int killcount, int health, int floorz, int momx, int momy, int momz, int z, int angle, gamestate_t gamestate), {
+EM_ASYNC_JS(void, hydra_send, (ticcmd_t *cmd, playerstate_t playerstate, int kill_count, int secret_count, int item_count, int int health, int floorz, int momx, int momy, int momz, int z, int angle, gamestate_t gamestate), {
   await hydraSend({
     forwardMove: HEAP8[cmd],
     sideMove: HEAP8[cmd+1],
@@ -29,8 +29,10 @@ EM_ASYNC_JS(void, hydra_send, (ticcmd_t *cmd, playerstate_t playerstate, int kil
       },
       health: health,
     },
-    playerState: playerstate,
-    killCount: killcount,
+    playerState: player_state,
+    killCount: kill_count,
+    secretCount: secret_count,
+    itemCount: item_count,
   },
   gamestate);
 });

@@ -666,11 +666,11 @@ boolean G_Responder(event_t *ev)
     }
 
     if (gamestate == GS_LEVEL) {
-#if 0 
-	if (devparm && ev->type == ev_keydown && ev->data1 == ';') 
-	{ 
-	    G_DeathMatchSpawnPlayer (0); 
-	    return true; 
+#if 0
+	if (devparm && ev->type == ev_keydown && ev->data1 == ';')
+	{
+	    G_DeathMatchSpawnPlayer (0);
+	    return true;
 	}
 #endif
         if (HU_Responder(ev)) return true; // chat ate the event
@@ -747,7 +747,6 @@ void G_Ticker(void)
     ticcmd_t *cmd;
     playerstate_t player_state;
     mobj_t *mo;
-    int killcount;
 
 
     // do player reborns if needed
@@ -911,23 +910,8 @@ void G_Ticker(void)
     if(M_CheckParm("-hydra-send") > 0) {
         for (i = 0; i < MAXPLAYERS; i++) {
             if (playeringame[i]) {
-                player_state = players[i].playerstate;
-                killcount = players[i].killcount;
                 mo = &players[i].mo;
-
-                printf("hydra send: forwardmove=%i sidemove=%i buttons=%i health=%i, floorz=%i, momx=%i, momy=%i, momz=%i, z=%i, angle=%i, x=%i, y=%i\n",
-                    cmd->forwardmove,
-                    cmd->sidemove,
-                    cmd->buttons,
-                    mo->health,
-                    mo->floorz,
-                    mo->momx,
-                    mo->momy,
-                    mo->momz,
-                    mo->angle,
-                    mo->x,
-                    mo->y);
-                hydra_send(cmd, player_state, killcount, mo->health, mo->floorz, mo->momx, mo->momy, mo->momz, mo->z, mo->angle, gamestate);
+                hydra_send(cmd, players[i].playerstate, players[i].killcount, players[i].secretcount, players[i].itemcount, mo->health, mo->floorz, mo->momx, mo->momy, mo->momz, mo->z, mo->angle, gamestate);
             }
         }
     }
