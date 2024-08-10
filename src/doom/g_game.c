@@ -747,6 +747,10 @@ void G_Ticker(void)
     ticcmd_t *cmd;
     playerstate_t player_state;
     mobj_t *mo;
+    int killcount;
+    int secretcount;
+    int itemcount;
+    int leveltics;
 
 
     // do player reborns if needed
@@ -910,8 +914,14 @@ void G_Ticker(void)
     if(M_CheckParm("-hydra-send") > 0) {
         for (i = 0; i < MAXPLAYERS; i++) {
             if (playeringame[i]) {
+                player_state = players[i].playerstate;
+                killcount = players[i].killcount;
+                secretcount = players[i].secretcount;
+                itemcount = players[i].itemcount;
+                leveltics = leveltime;
+
                 mo = &players[i].mo;
-                hydra_send(cmd, players[i].playerstate, players[i].killcount, players[i].secretcount, players[i].itemcount, mo->health, mo->floorz, mo->momx, mo->momy, mo->momz, mo->z, mo->angle, gamestate);
+                hydra_send(cmd, player_state, killcount, secretcount, itemcount, mo->health, mo->floorz, mo->momx, mo->momy, mo->momz, mo->z, mo->angle, gamestate, leveltics);
             }
         }
     }

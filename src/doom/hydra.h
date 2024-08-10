@@ -10,10 +10,9 @@
 #include "doomstat.h"
 
 // TODO: Find a better way to interface with JS
-// hydra_send(cmd, player_state, killcount, mo->health, mo->floorz, mo->momx, mo->momy, mo->momz, mo->z, mo->angle, gamestate);
 
-EM_ASYNC_JS(void, hydra_send, (ticcmd_t *cmd, playerstate_t playerstate, int kill_count, int secret_count, int item_count, int int health, int floorz, int momx, int momy, int momz, int z, int angle, gamestate_t gamestate), {
-  await hydraSend({
+EM_ASYNC_JS(void, hydra_send, (ticcmd_t *cmd, playerstate_t player_state, int kill_count, int secret_count, int item_count, int health, int floorz, int momx, int momy, int momz, int z, int angle, gamestate_t gamestate, int leveltics), {
+    await hydraSend({
     forwardMove: HEAP8[cmd],
     sideMove: HEAP8[cmd+1],
   },
@@ -30,11 +29,19 @@ EM_ASYNC_JS(void, hydra_send, (ticcmd_t *cmd, playerstate_t playerstate, int kil
       health: health,
     },
     playerState: player_state,
+    totalStats: {
+        killCount: -1,
+        secretCount: -1,
+        itemCount: -1,
+    },
+    levelStats: {
     killCount: kill_count,
     secretCount: secret_count,
     itemCount: item_count,
+    }
   },
-  gamestate);
+  gamestate,
+  leveltics);
 });
 
 // TODO: calling c from javascript proved itself as hard because the
