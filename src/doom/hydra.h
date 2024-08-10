@@ -49,7 +49,6 @@ EM_ASYNC_JS(void, hydra_send, (ticcmd_t *cmd, playerstate_t player_state, int ki
 
 EM_ASYNC_JS(void, hydra_recv, (ticcmd_t *cmd), {
   const res = await hydraRecv();
-  console.log("hydra_recv", res);
   if (res == null) {
      return;
   }

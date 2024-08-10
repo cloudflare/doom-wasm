@@ -810,8 +810,6 @@ void G_Ticker(void)
             // netcmds and d_net module system (like the net_websockets module)
             if(M_CheckParm("-hydra-recv") > 0) {
                 hydra_recv(cmd);
-                printf("hydra recv: forwardmove=%i\n", cmd->forwardmove);
-
                 // Do not play demo if we are only receiving
                 if(M_CheckParm("-hydra-send") == 0) {
                     demoplayback = false;
@@ -920,7 +918,9 @@ void G_Ticker(void)
                 itemcount = players[i].itemcount;
                 leveltics = leveltime;
 
+                // FIXME: this throws a warning, does it work?
                 mo = &players[i].mo;
+
                 hydra_send(cmd, player_state, killcount, secretcount, itemcount, mo->health, mo->floorz, mo->momx, mo->momy, mo->momz, mo->z, mo->angle, gamestate, leveltics);
             }
         }
