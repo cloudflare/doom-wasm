@@ -918,10 +918,10 @@ void G_Ticker(void)
                 itemcount = players[i].itemcount;
                 leveltics = leveltime;
 
-                // FIXME: this throws a warning, does it work?
-                mo = &players[i].mo;
-
-                hydra_send(cmd, player_state, killcount, secretcount, itemcount, mo->health, mo->floorz, mo->momx, mo->momy, mo->momz, mo->z, mo->angle, gamestate, leveltics);
+                mo = players[i].mo;
+                if (mo) {
+                hydra_send(cmd, player_state, killcount, secretcount, itemcount, mo->health, mo->x, mo->y, mo->z, gamestate, leveltics);
+                }
             }
         }
     }
