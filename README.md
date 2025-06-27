@@ -46,7 +46,7 @@ Inspect [src/index.html][6] for startup details.
 
 Check our live multiplayer [demo][5] and [blog post][7].
 
-## stdout procotol
+## stdout protocol
 
 To show important messages coming from the game while it's running we send the following formatted stdout messages, which can be parsed in the web page running the wasm:
 
