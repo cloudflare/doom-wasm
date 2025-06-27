@@ -80,7 +80,7 @@ buildEmscriptenPackage {
 
   installPhase = ''
     mkdir -p $out
-    cp src/websockets-doom.html $out
+    cp src/index.html $out
     cp src/websockets-doom.js $out
     cp src/websockets-doom.wasm $out
     cp src/websockets-doom.wasm.map $out
