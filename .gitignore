@@ -21,3 +21,4 @@ src/doom1.wad
 .githelp
 .direnv/
 /.ccls-cache/
+result*
