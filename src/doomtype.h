@@ -100,21 +100,14 @@
 
 #include <inttypes.h>
 
-#if defined(__cplusplus) || defined(__bool_true_false_are_defined)
-
-// Use builtin bool type with C++.
+// boolean must be the same size in every translation unit. The old
+// conditional (enum when <stdbool.h> hadn't been included yet, bool when it
+// had) made boolean 4 bytes in some TUs and 1 byte in others, so 4-byte
+// stores to shared globals like netgame clobbered adjacent globals
+// (caught by ASan as a global-buffer-overflow). Always use bool.
+#include <stdbool.h>
 
 typedef bool boolean;
-
-#else
-
-typedef enum 
-{
-    false, 
-    true
-} boolean;
-
-#endif
 
 typedef uint8_t byte;
 typedef uint8_t pixel_t;

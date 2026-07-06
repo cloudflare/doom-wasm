@@ -56,14 +56,25 @@
         <script>
             var commonArgs = ["-iwad", "doom1.wad", "-window", "-nogui", "-nomusic", "-config", "default.cfg", "-servername", "doomflare"];
 
+            // Surface wasm crash stacks in the console; "Uncaught (in promise)"
+            // errors from the async runtime are otherwise swallowed with no trace.
+            window.addEventListener("unhandledrejection", (e) => {
+                console.error("UNHANDLED: " + (e.reason && (e.reason.stack || e.reason)));
+            });
+            window.addEventListener("error", (e) => {
+                console.error("ERROR: " + (e.error && e.error.stack ? e.error.stack : e.message));
+            });
+
             var Module = {
-                onRuntimeInitialized: () => {
-                    callMain(commonArgs);
-                },
-                noInitialRun: true,
+                // main() runs automatically (INVOKE_RUN) once the preloaded
+                // files below are ready; callMain is no longer exported by
+                // recent Emscripten versions.
+                arguments: commonArgs,
                 preRun: () => {
-                    Module.FS.createPreloadedFile("", "doom1.wad", "doom1.wad", true, true);
-                    Module.FS.createPreloadedFile("", "default.cfg", "default.cfg", true, true);
+                    // Emscripten 6.x renamed FS.createPreloadedFile to
+                    // FS.preloadFile, exported on Module as FS_preloadFile.
+                    Module.FS_preloadFile("", "doom1.wad", "doom1.wad", true, true);
+                    Module.FS_preloadFile("", "default.cfg", "default.cfg", true, true);
                 },
                 printErr: function (text) {
                     if (arguments.length > 1) text = Array.prototype.slice.call(arguments).join(" ");

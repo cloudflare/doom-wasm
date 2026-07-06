@@ -392,7 +392,10 @@ typedef struct
     // If false use 0 for any position.
     // Note: as eight entries are available,
     //  we might as well insert the same name eight times.
-    boolean	rotate;
+    // int, not boolean: R_InstallSpriteLump memsets this to -1 as an
+    // "uninitialized" marker and compares against it; a 1-byte bool
+    // cannot hold -1.
+    int		rotate;
 
     // Lump to use for view angles 0-7.
     short	lump[8];

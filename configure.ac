@@ -26,7 +26,13 @@ OPT_LEVEL=3
 if test "$GCC" = "yes"
 then
         WARNINGS="-Wall -Wdeclaration-after-statement -Wredundant-decls"
-        CFLAGS="-O$OPT_LEVEL -g $WARNINGS $orig_CFLAGS"
+        # -std=gnu99: modern clang defaults to C23, where true/false are
+        # keywords and collide with the boolean enum in doomtype.h.
+        # -fno-strict-aliasing: the id-era code type-puns byte buffers through
+        # int16/int32 pointers everywhere (e.g. wipe_shittyColMajorXform); at
+        # -O3 modern LLVM exploits that UB and miscompiles the screen-wipe
+        # into a transposed, never-finishing mess.
+        CFLAGS="-O$OPT_LEVEL -std=gnu99 -fno-strict-aliasing $WARNINGS $orig_CFLAGS"
 fi
 
 # PKG_CHECK_MODULES(SDL, [sdl2 >= 2.0.7])
@@ -115,10 +121,19 @@ AS_IF([test "x$with_libpng" != xno], [
 
 # TODO: We currently link everything against libraries that don't need it.
 # Use the specific library CFLAGS/LIBS variables instead of setting them here.
-EMFLAGS="-gsource-map -s INVOKE_RUN=1 -s USE_SDL=2 -s USE_SDL_MIXER=2 -s LEGACY_GL_EMULATION=0 -s USE_SDL_NET=2 -s ASSERTIONS=0 -s WASM=1 -s ALLOW_MEMORY_GROWTH=0 -s FORCE_FILESYSTEM=1 -s EXTRA_EXPORTED_RUNTIME_METHODS=[['FS','ccall']] -s SAFE_HEAP=1 -s EXIT_RUNTIME=1 -s STACK_OVERFLOW_CHECK=1 -s PROXY_POSIX_SOCKETS=0 -s USE_PTHREADS=0 -s PROXY_TO_PTHREAD=0 -s TOTAL_MEMORY=64MB -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s ASYNCIFY -O3 --source-map-base /"
+# Release flags: no SAFE_HEAP/STACK_OVERFLOW_CHECK/source maps (debug-only, large
+# runtime cost), closure for smaller JS glue. ASYNCIFY is still required for
+# emscripten_sleep() on startup and netgame wait paths (see I_Sleep).
+# Do NOT add -flto: cross-TU LTO at -O3 turns undefined behavior in this
+# 1993-era codebase into a compile-time `unreachable` trap in main() (verified:
+# the LTO build crashes immediately after Z_Init).
+# STACK_SIZE=5MB restores the pre-3.1.25 Emscripten default; the modern 64KB
+# default is too small for Doom's init path.
+EMFLAGS="-s INVOKE_RUN=1 -s USE_SDL=2 -s USE_SDL_MIXER=2 -s LEGACY_GL_EMULATION=0 -s USE_SDL_NET=2 -s ASSERTIONS=0 -s WASM=1 -s ALLOW_MEMORY_GROWTH=0 -s FORCE_FILESYSTEM=1 -s EXPORTED_RUNTIME_METHODS=[['FS','ccall']] -s EXIT_RUNTIME=1 -s PROXY_POSIX_SOCKETS=0 -s USE_PTHREADS=0 -s PROXY_TO_PTHREAD=0 -s INITIAL_MEMORY=64MB -s STACK_SIZE=5MB -s ERROR_ON_UNDEFINED_SYMBOLS=0 -s ASYNCIFY -O3"
+EMLDFLAGS="--closure 1"
 
 CFLAGS="$CFLAGS $SDL_CFLAGS ${SAMPLERATE_CFLAGS:-} ${PNG_CFLAGS:-} $EMFLAGS"
-LDFLAGS="$LDFLAGS $SDL_LIBS ${SAMPLERATE_LIBS:-} ${PNG_LIBS:-} $EMFLAGS -lwebsocket.js"
+LDFLAGS="$LDFLAGS $SDL_LIBS ${SAMPLERATE_LIBS:-} ${PNG_LIBS:-} $EMFLAGS $EMLDFLAGS -lwebsocket.js"
 
 AC_CHECK_LIB(m, log)
 

@@ -375,11 +375,14 @@ void D_RunFrame()
     static boolean wipe;
 
     if (wipe) {
-        do {
-            nowtime = I_GetTime();
-            tics = nowtime - wipestart;
-            I_Sleep(1);
-        } while (tics <= 0);
+        // No game tic has elapsed yet: return to the browser event loop
+        // rather than Asyncify-sleeping (stack unwind/rewind) inside the
+        // frame. The main loop re-enters D_RunFrame on the next rAF frame.
+        nowtime = I_GetTime();
+        tics = nowtime - wipestart;
+        if (tics <= 0) {
+            return;
+        }
 
         wipestart = nowtime;
         wipe = !wipe_ScreenWipe(wipe_Melt, 0, 0, SCREENWIDTH, SCREENHEIGHT, tics);

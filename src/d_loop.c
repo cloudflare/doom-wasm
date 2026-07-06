@@ -661,16 +661,15 @@ void TryRunTics(void)
 
         if (lowtic < gametic / ticdup) I_Error("TryRunTics: lowtic < gametic");
 
-        // Still no tics to run? Sleep until some are available.
+        // Still no tics to run? Return to the browser event loop instead
+        // of sleeping: I_Sleep() is emscripten_sleep(), which Asyncify
+        // implements by unwinding and rewinding the entire call stack.
+        // This loop is reached on almost every frame (the 60Hz+ rAF main
+        // loop outpaces the 35Hz tic rate), so sleeping here put that
+        // unwind cost on the hot path. The main loop calls TryRunTics()
+        // again on the next frame, which serves the same purpose.
         if (lowtic < gametic / ticdup + counts) {
-            // If we're in a netgame, we might spin forever waiting for
-            // new network data to be received. So don't stay in here
-            // forever - give the menu a chance to work.
-            if (I_GetTime() / ticdup - entertic >= MAX_NETGAME_STALL_TICS) {
-                return;
-            }
-
-            I_Sleep(1);
+            return;
         }
     }
 
