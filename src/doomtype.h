@@ -100,7 +100,7 @@
 
 #include <inttypes.h>
 
-#if defined(__cplusplus) || defined(__bool_true_false_are_defined)
+#if defined(__cplusplus)
 
 // Use builtin bool type with C++.
 
@@ -108,11 +108,20 @@ typedef bool boolean;
 
 #else
 
-typedef enum 
-{
-    false, 
-    true
-} boolean;
+// One boolean ABI for every C translation unit. Picking a 1-byte bool when
+// <stdbool.h> was seen and a 4-byte enum otherwise breaks under Emscripten:
+// <emscripten.h> pulls stdbool.h in (via em_js.h), so files that include it
+// before this header disagree with the rest about sizeof(boolean), and
+// shared globals such as playeringame[], netgame and paused read as garbage
+// across that boundary. Doom also relies on boolean being int-sized and
+// memset()-able to -1 (R_InstallSpriteLump), and C23 makes true/false
+// keywords, so use int and only define the constants when nothing else has.
+typedef int boolean;
+
+#if !defined(__bool_true_false_are_defined) && !(defined(__STDC_VERSION__) && __STDC_VERSION__ >= 202311L)
+#define false 0
+#define true 1
+#endif
 
 #endif
 
