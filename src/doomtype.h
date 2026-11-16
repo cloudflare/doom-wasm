@@ -100,11 +100,18 @@
 
 #include <inttypes.h>
 
-#if defined(__cplusplus) || defined(__bool_true_false_are_defined)
+#if defined(__cplusplus)
 
 // Use builtin bool type with C++.
 
 typedef bool boolean;
+
+#elif defined(__bool_true_false_are_defined)
+
+// stdbool.h already included (emscripten/SDL headers): keep the enum's size,
+// otherwise files disagree on sizeof(boolean) and corrupt memory.
+
+typedef int boolean;
 
 #else
 
